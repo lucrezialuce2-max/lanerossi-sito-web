@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanerossi - Wool Energy: The Sleep System</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Config & Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'lanerossi-cream': '#F9F5F0',
+                        'lanerossi-taupe': '#8C7B6C',
+                        'lanerossi-brown': '#5D534A',
+                        'lanerossi-sage': '#A4B494',
+                        'lanerossi-dark': '#1A1A1A',
+                        'lanerossi-sand': '#E6DMD3',
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #F9F5F0;
+            color: #1A1A1A;
+            overflow-x: hidden;
+        }
+
+        /* Typography Utilities */
+        .text-balance {
+            text-wrap: balance;
+        }
+
+        /* Animations */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+            will-change: opacity, visibility;
+        }
+
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Hero Parallaxish Effect */
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1541123437800-1bb1317badc2?q=80&w=2070&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; 
+        }
+
+        /* Mobile Menu Transitions */
+        #mobile-menu {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        #mobile-menu.hidden-menu {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #mobile-menu.visible-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F9F5F0; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #8C7B6C; 
+            border-radius: 4px;
+        }
+        
+        /* Loader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #F9F5F0;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Custom Button Hover */
+        .btn-custom {
+            position: relative;
+            overflow: hidden;
+            transition: color 0.4s;
+        }
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transition: left 0.4s;
+        }
+        .btn-custom:hover::before {
+            left: 0;
+        }
+
+        /* Animation for Sound Icon */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="text-center animate-pulse flex flex-col items-center justify-center">
+            <img src="image_fd153c.png" alt="Lanerossi Logo" class="w-48 h-auto mb-4">
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 py-4 md:py-6 px-6 lg:px-12 text-lanerossi-dark">
+        <div class="flex justify-between items-center w-full">
+            <!-- Left Side: Hamburger & Logo -->
+            <div class="flex items-center gap-4">
+                <button id="hamburger-btn" class="lg:hidden text-2xl hover:text-lanerossi-taupe transition-colors z-50 relative" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <a href="#" class="flex items-center z-50 relative">
+                    <img src="image_fd153c.png" alt="Lanerossi" class="h-8 md:h-10 w-auto object-contain">
+                </a>
+            </div>
+            
+            <!-- Desktop Links -->
+            <div class="hidden lg:flex gap-10 font-sans text-sm tracking-wide uppercase font-medium">
+                <a href="#concept" class="hover:text-lanerossi-taupe transition-colors">Il Concept</a>
+                <a href="#sensi" class="hover:text-lanerossi-taupe transition-colors">I Sensi</a>
+                <a href="#playlist" onclick="scrollToCenter(event, 'playlist')" class="hover:text-lanerossi-taupe transition-colors font-bold text-lanerossi-brown cursor-pointer">Playlist</a>
+                <a href="#prodotti" class="hover:text-lanerossi-taupe transition-colors">La Collezione</a>
+                <a href="#experience" class="hover:text-lanerossi-taupe transition-colors">Eventi</a>
+            </div>
+
+            <!-- Empty div to balance flex layout if needed, or remove -->
+            <div class="hidden lg:block w-8"></div> 
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="hidden-menu fixed inset-0 bg-lanerossi-cream z-40 flex flex-col justify-center items-center h-screen w-screen">
+             <button id="close-menu-btn" class="absolute top-6 right-6 text-3xl text-lanerossi-brown p-4">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="flex flex-col gap-8 text-center font-serif text-3xl text-lanerossi-brown italic">
+                <a href="#concept" class="hover:text-lanerossi-taupe transition-colors" onclick="toggleMenu()">Il Concept</a>
+                <a href="#sensi" class="hover:text-lanerossi-taupe transition-colors" onclick="toggleMenu()">I Sensi</a>
+                <a href="#playlist" class="hover:text-lanerossi-taupe font-bold not-italic font-sans text-2xl uppercase tracking-widest" onclick="toggleMenuAndScroll(event, 'playlist')">Playlist</a>
+                <a href="#prodotti" class="hover:text-lanerossi-taupe transition-colors" onclick="toggleMenu()">La Collezione</a>
+                <a href="#experience" class="hover:text-lanerossi-taupe transition-colors" onclick="toggleMenu()">Eventi</a>
+            </div>
+            <div class="mt-12 text-sm font-sans uppercase tracking-widest opacity-50">
+                Lanerossi Sleep System
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen w-full overflow-hidden">
+        <div class="hero-bg absolute inset-0"></div>
+        <div class="absolute inset-0 bg-black/20"></div> <!-- Overlay for contrast -->
+        
+        <div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 fade-in-section is-visible">
+            <p class="text-white font-sans uppercase tracking-[0.2em] mb-4 text-xs md:text-base animate-fade-in-up">L'ecosistema del sonno</p>
+            <h1 class="text-white font-serif text-5xl md:text-8xl lg:text-9xl mb-6 italic leading-tight">
+                Sleep is a <br/><span class="not-italic">Sense</span>
+            </h1>
+            <p class="text-white/90 font-sans text-base md:text-xl max-w-xl mb-10 font-light px-4">
+                Il riposo non è solo una pausa, è un'esperienza sensoriale completa. Scopri la nuova Wool Energy.
+            </p>
+            <a href="#concept" class="btn-custom bg-white text-lanerossi-brown px-8 py-3 md:px-10 md:py-4 font-sans text-xs md:text-sm uppercase tracking-widest hover:bg-lanerossi-cream transition-colors">
+                Esplora il sistema
+            </a>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+            <i class="fas fa-chevron-down text-xl md:text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- Concept Section -->
+    <section id="concept" class="py-16 md:py-24 px-6 md:px-12 lg:px-24 bg-lanerossi-cream relative overflow-hidden">
+        <!-- Decorative bg shape -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-lanerossi-taupe/5 rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
+
+        <div class="max-w-4xl mx-auto text-center fade-in-section">
+            <span class="text-lanerossi-taupe font-sans uppercase tracking-widest text-xs md:text-sm font-semibold mb-4 block">Wool Energy</span>
+            <h2 class="font-serif text-4xl md:text-6xl text-lanerossi-brown mb-8 leading-tight">
+                Quattro elementi, <br/> <i class="font-light">Cinque sensi.</i>
+            </h2>
+            <div class="w-16 h-0.5 bg-lanerossi-taupe mb-8 mx-auto"></div>
+            
+            <p class="font-sans text-gray-600 text-base md:text-lg leading-relaxed mb-6 text-balance">
+                Abbiamo creato un percorso unico per aiutarti a trovare l'armonia perfetta. 
+                Il nostro sistema integra la purezza della lana Merino extrafine con tecnologie innovative come il grafite bedding.
+            </p>
+            <p class="font-sans text-gray-600 text-base md:text-lg leading-relaxed mb-12 text-balance">
+                Non limitarti a dormire: ascolta il tuo riposo. Un ecosistema progettato per lavorare in sinergia e rigenerare corpo e mente.
+            </p>
+            
+            <!-- Centered Icons Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12 justify-items-center max-w-3xl mx-auto">
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-lanerossi-sage/10 flex items-center justify-center mb-1">
+                        <i class="fas fa-leaf text-lanerossi-sage text-2xl"></i>
+                    </div>
+                    <span class="font-serif text-lg md:text-xl italic text-lanerossi-brown">Naturale</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-lanerossi-sage/10 flex items-center justify-center mb-1">
+                        <i class="fas fa-wind text-lanerossi-sage text-2xl"></i>
+                    </div>
+                    <span class="font-serif text-lg md:text-xl italic text-lanerossi-brown">Traspirante</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-lanerossi-sage/10 flex items-center justify-center mb-1">
+                        <i class="fas fa-gem text-lanerossi-sage text-2xl"></i>
+                    </div>
+                    <span class="font-serif text-lg md:text-xl italic text-lanerossi-brown">Prezioso</span>
+                </div>
+                <div class="flex flex-col items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-lanerossi-sage/10 flex items-center justify-center mb-1">
+                        <i class="fas fa-recycle text-lanerossi-sage text-2xl"></i>
+                    </div>
+                    <span class="font-serif text-lg md:text-xl italic text-lanerossi-brown">Sostenibile</span>
+                </div>
+            </div>
+
+            <a href="#sensi" class="inline-flex items-center gap-2 font-sans uppercase text-xs md:text-sm tracking-widest text-lanerossi-brown border-b border-lanerossi-brown pb-1 hover:text-lanerossi-taupe hover:border-lanerossi-taupe transition-colors">
+                Scopri i sensi <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Senses Grid (Based on Campaign Graphic) -->
+    <section id="sensi" class="py-16 md:py-24 bg-white text-lanerossi-dark">
+        <div class="container mx-auto px-4 md:px-8">
+            <div class="text-center mb-12 md:mb-20 fade-in-section">
+                <h2 class="font-serif text-3xl md:text-5xl mb-4">Un'esperienza sensoriale</h2>
+                <p class="font-sans text-gray-500 uppercase tracking-widest text-xs md:text-sm">Coinvolge tutti i sensi</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+                <!-- Touch -->
+                <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section">
+                    <img src="Immagine WhatsApp 2025-12-15 ore 10.59.56_aeec71a0.jpg" alt="Touch" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex flex-col justify-center items-center text-white p-6">
+                        <i class="fas fa-hand-sparkles text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Touch</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Tatto</p>
+                        <div class="h-0 overflow-hidden group-hover:h-auto transition-all duration-500 text-center mt-2 opacity-0 group-hover:opacity-100">
+                            <p class="text-sm mt-2 font-light">Morbidezza naturale sulla pelle.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sight -->
+                <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section" style="transition-delay: 100ms;">
+                    <img src="Screenshot 2025-12-15 105620.jpg" alt="Sight" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex flex-col justify-center items-center text-white p-6">
+                        <i class="fas fa-eye text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Sight</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Vista</p>
+                        <div class="h-0 overflow-hidden group-hover:h-auto transition-all duration-500 text-center mt-2 opacity-0 group-hover:opacity-100">
+                            <p class="text-sm mt-2 font-light">Texture e pattern rilassanti.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smell -->
+                <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section" style="transition-delay: 200ms;">
+                    <!-- Using a color block or abstract image for smell as in reference -->
+                    <div class="absolute inset-0 bg-gradient-to-b from-blue-100 to-green-100 opacity-100"></div>
+                    <img src="https://images.unsplash.com/photo-1615486771790-a7d519b5b985?q=80&w=1935&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-multiply transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 flex flex-col justify-center items-center text-lanerossi-brown p-6 z-10">
+                        <i class="fas fa-wind text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Smell</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Olfatto</p>
+                        <div class="h-0 overflow-hidden group-hover:h-auto transition-all duration-500 text-center mt-2 opacity-0 group-hover:opacity-100">
+                            <p class="text-sm mt-2 font-light">Infusi alla melissa e camomilla.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hearing (Enhanced for Visibility) -->
+                <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section">
+                    <img src="image_fcac3c.jpg" alt="Hearing" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex flex-col justify-center items-center text-white p-6">
+                        <i class="fas fa-headphones text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Hearing</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Udito</p>
+                        <div class="mt-4 flex flex-col items-center">
+                            <p class="text-sm font-light mb-4">La frequenza sonora ideale.</p>
+                            <!-- UPDATED QUIZ BUTTON: Solid White + Icon -->
+                            <a href="https://lucrezialuce2-max.github.io/domande-lanerossi/" target="_blank" class="px-6 py-3 bg-white text-lanerossi-brown text-xs font-bold uppercase tracking-widest hover:bg-lanerossi-sand transition-colors shadow-lg transform hover:scale-105 duration-300">
+                                <i class="fas fa-play mr-2"></i> Fai il Quiz Playlist
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Taste -->
+                <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section" style="transition-delay: 100ms;">
+                    <img src="image_fcac00.jpg" alt="Taste" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex flex-col justify-center items-center text-white p-6">
+                        <i class="fas fa-mug-hot text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Taste</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Gusto</p>
+                        <div class="h-0 overflow-hidden group-hover:h-auto transition-all duration-500 text-center mt-2 opacity-0 group-hover:opacity-100">
+                            <p class="text-sm mt-2 font-light">Tisane rigeneranti naturali.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- Sleep -->
+                 <div class="group relative h-72 md:h-80 overflow-hidden fade-in-section" style="transition-delay: 200ms;">
+                    <img src="download.jpeg" alt="Sleep" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-lanerossi-taupe/80 group-hover:bg-lanerossi-taupe/90 transition-colors flex flex-col justify-center items-center text-white p-6">
+                        <i class="fas fa-moon text-3xl mb-4 opacity-80"></i>
+                        <h3 class="font-serif text-4xl italic mb-1">Sleep</h3>
+                        <p class="font-sans text-xs uppercase tracking-widest opacity-80">Sonno</p>
+                        <a href="#prodotti" class="mt-4 px-6 py-2 border border-white text-xs uppercase tracking-widest hover:bg-white hover:text-lanerossi-brown transition-colors">Esplora</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW SECTION: Playlist Highlight -->
+    <section id="playlist" class="bg-lanerossi-brown text-lanerossi-cream py-16 md:py-16 relative overflow-hidden">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-10">
+            <div class="md:w-2/3 z-10 fade-in-section text-center md:text-left">
+                <span class="font-sans text-xs uppercase tracking-[0.2em] mb-2 block text-lanerossi-sage">Esperienza Sonora</span>
+                <h3 class="font-serif text-3xl md:text-5xl italic mb-4">Accendi il suono del sonno</h3>
+                <p class="font-sans text-sm md:text-base opacity-90 mb-8 max-w-xl leading-relaxed font-light mx-auto md:mx-0">
+                    Il riposo è un'esperienza multisensoriale. Abbiamo creato una playlist esclusiva basata sulle frequenze del benessere. Fai il quiz per scoprire la tua traccia ideale e lasciati trasportare.
+                </p>
+                <a href="https://lucrezialuce2-max.github.io/domande-lanerossi/" target="_blank" class="inline-flex items-center gap-3 bg-white text-lanerossi-brown px-8 py-4 font-sans text-xs font-bold uppercase tracking-widest hover:bg-lanerossi-sand transition-all transform hover:-translate-y-1 shadow-xl">
+                    <i class="fas fa-play-circle text-lg"></i> Fai il Quiz e Ascolta
+                </a>
+            </div>
+            
+            <!-- Animated Sound Visual -->
+            <div class="md:w-1/3 flex justify-center z-10 fade-in-section mt-8 md:mt-0">
+                 <div class="w-32 h-32 md:w-40 md:h-40 border border-white/20 rounded-full flex items-center justify-center relative animate-pulse-slow">
+                    <i class="fas fa-music text-4xl md:text-5xl"></i>
+                    <!-- Ripples -->
+                    <div class="absolute inset-0 border border-white/10 rounded-full scale-125"></div>
+                    <div class="absolute inset-0 border border-white/5 rounded-full scale-150"></div>
+                 </div>
+            </div>
+            
+            <!-- Background Decoration -->
+            <div class="absolute -right-20 -bottom-20 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
+        </div>
+    </section>
+
+    <!-- Product Collection -->
+    <section id="prodotti" class="py-16 md:py-24 bg-lanerossi-cream">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12 md:mb-16 fade-in-section">
+                <h2 class="font-serif text-4xl md:text-5xl text-lanerossi-brown mb-4">Prodotti Focus</h2>
+                <div class="w-24 h-0.5 bg-lanerossi-taupe mx-auto"></div>
+            </div>
+
+            <!-- Horizontal Slider/Timeline mimic -->
+            <div class="relative">
+                <!-- Line -->
+                <div class="hidden lg:block absolute top-1/2 left-0 w-full h-0.5 bg-lanerossi-taupe/30 -translate-y-1/2 z-0"></div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+                    
+                    <!-- Card 1: Morfeo Topper -->
+                    <div class="bg-white p-4 shadow-lg hover:-translate-y-2 transition-transform duration-500 fade-in-section flex flex-col">
+                        <div class="h-64 overflow-hidden mb-4">
+                            <img src="Screenshot 2025-12-15 100346.jpg" alt="Morfeo Topper" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-center mt-auto bg-white pt-2">
+                            <h3 class="font-sans font-bold text-lanerossi-brown text-lg mb-1">Morfeo Topper</h3>
+                            <p class="font-serif italic text-gray-500 text-sm">Il benessere inizia dal contatto</p>
+                            <button class="mt-4 text-xs font-bold uppercase tracking-widest text-lanerossi-taupe hover:text-black">Dettagli +</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Morfeo Guanciale -->
+                    <div class="bg-white p-4 shadow-lg hover:-translate-y-2 transition-transform duration-500 fade-in-section" style="transition-delay: 100ms;">
+                        <div class="h-64 overflow-hidden mb-4">
+                            <img src="Screenshot 2025-12-15 101703.jpg" alt="Morfeo Guanciale" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-center mt-auto bg-white pt-2">
+                            <h3 class="font-sans font-bold text-lanerossi-brown text-lg mb-1">Morfeo Guanciale</h3>
+                            <p class="font-serif italic text-gray-500 text-sm">Il vero riposo è silenzioso</p>
+                            <button class="mt-4 text-xs font-bold uppercase tracking-widest text-lanerossi-taupe hover:text-black">Dettagli +</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Thermocoperta -->
+                    <div class="bg-white p-4 shadow-lg hover:-translate-y-2 transition-transform duration-500 fade-in-section" style="transition-delay: 200ms;">
+                        <div class="h-64 overflow-hidden mb-4">
+                            <img src="Screenshot 2025-12-15 105620.jpg" alt="Thermocoperta" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-center mt-auto bg-white pt-2">
+                            <h3 class="font-sans font-bold text-lanerossi-brown text-lg mb-1">Thermocoperta</h3>
+                            <p class="font-serif italic text-gray-500 text-sm">Respirare bene è dormire meglio</p>
+                            <button class="mt-4 text-xs font-bold uppercase tracking-widest text-lanerossi-taupe hover:text-black">Dettagli +</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: G_raphite Bedding -->
+                    <div class="bg-white p-4 shadow-lg hover:-translate-y-2 transition-transform duration-500 fade-in-section" style="transition-delay: 300ms;">
+                        <div class="h-64 overflow-hidden mb-4">
+                            <img src="Screenshot 2025-12-15 103446.jpg" alt="G_raphite Bedding" class="w-full h-full object-cover">
+                        </div>
+                        <div class="text-center mt-auto bg-white pt-2">
+                            <h3 class="font-sans font-bold text-lanerossi-brown text-lg mb-1">G_raphite Bedding</h3>
+                            <p class="font-serif italic text-gray-500 text-sm">L'armonia prepara la mente</p>
+                            <button class="mt-4 text-xs font-bold uppercase tracking-widest text-lanerossi-taupe hover:text-black">Dettagli +</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Promo / Events Section (Updated with Link) -->
+    <section id="experience" class="py-16 md:py-24 bg-white">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="bg-lanerossi-sand rounded-3xl overflow-hidden shadow-xl flex flex-col md:flex-row">
+                
+                <!-- Image side with diagonal cut effect mimic -->
+                <div class="md:w-1/2 relative min-h-[300px] md:min-h-[400px]">
+                    <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?q=80&w=2057&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover">
+                    <!-- Overlay text -->
+                    <div class="absolute inset-0 bg-black/10"></div>
+                </div>
+
+                <!-- Content side -->
+                <div class="md:w-1/2 p-8 md:p-16 flex flex-col justify-center">
+                    <h2 class="font-serif text-3xl md:text-4xl text-lanerossi-brown mb-2">Wool Energy</h2>
+                    <p class="font-sans text-lg md:text-xl uppercase tracking-widest mb-8 text-gray-600">The Experience</p>
+
+                    <ul class="space-y-6">
+                        <li class="flex items-center gap-6 border-b border-lanerossi-brown/20 pb-4">
+                            <div class="bg-lanerossi-brown text-white p-3 text-center min-w-[60px] md:min-w-[70px]">
+                                <span class="block text-lg md:text-xl font-bold font-serif">9</span>
+                                <span class="block text-[10px] uppercase">Maggio</span>
+                            </div>
+                            <span class="font-serif text-xl md:text-2xl text-lanerossi-brown">Vicenza</span>
+                        </li>
+                        <li class="flex items-center gap-6 border-b border-lanerossi-brown/20 pb-4">
+                            <div class="bg-lanerossi-brown text-white p-3 text-center min-w-[60px] md:min-w-[70px]">
+                                <span class="block text-lg md:text-xl font-bold font-serif">6</span>
+                                <span class="block text-[10px] uppercase">Giugno</span>
+                            </div>
+                            <span class="font-serif text-xl md:text-2xl text-lanerossi-brown">Roma</span>
+                        </li>
+                        <li class="flex items-center gap-6 border-b border-lanerossi-brown/20 pb-4">
+                            <div class="bg-lanerossi-brown text-white p-3 text-center min-w-[60px] md:min-w-[70px]">
+                                <span class="block text-lg md:text-xl font-bold font-serif">11</span>
+                                <span class="block text-[10px] uppercase">Luglio</span>
+                            </div>
+                            <span class="font-serif text-xl md:text-2xl text-lanerossi-brown">Milano</span>
+                        </li>
+                        <!-- Added Frankfurt Date -->
+                        <li class="flex items-center gap-6 border-b border-lanerossi-brown/20 pb-4">
+                            <div class="bg-lanerossi-brown text-white p-3 text-center min-w-[60px] md:min-w-[70px]">
+                                <span class="block text-lg md:text-xl font-bold font-serif">29</span>
+                                <span class="block text-[10px] uppercase">Agosto</span>
+                            </div>
+                            <span class="font-serif text-xl md:text-2xl text-lanerossi-brown">Francoforte</span>
+                        </li>
+                    </ul>
+
+                    <div class="mt-8 flex flex-col md:flex-row items-center gap-6">
+                        <!-- LINK MASTERCLASS ESPERIENZIALE -->
+                        <a href="https://lucrezialuce2-max.github.io/masterclass-esperienziale/" target="_blank" class="w-full md:w-auto text-center bg-lanerossi-brown text-white px-8 py-3 font-sans text-sm uppercase tracking-widest hover:bg-lanerossi-dark transition-colors shadow-lg">
+                            Prenota il tuo posto
+                        </a>
+                        <div class="flex items-center gap-4">
+                            <div class="bg-white p-2 shadow-md inline-block">
+                                <i class="fas fa-qrcode text-3xl md:text-4xl text-lanerossi-dark"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section (Updated with Link) -->
+    <section class="py-16 md:py-24 bg-lanerossi-cream flex justify-center items-center">
+        <div class="bg-white max-w-md w-full p-8 md:p-10 shadow-2xl rounded-2xl border border-gray-100 text-center fade-in-section mx-4">
+            <h3 class="font-serif text-3xl md:text-4xl italic text-lanerossi-brown mb-2">Lanerossi News</h3>
+            <p class="font-sans text-xs uppercase tracking-widest text-gray-400 mb-6">Esplora l'ecosistema del sonno</p>
+            
+            <p class="font-sans text-sm text-gray-600 mb-8 leading-relaxed">
+                Iscriviti per ricevere in anteprima le novità, gli eventi e i segreti di un riposo rigenerante.
+            </p>
+
+            <!-- CTA NEWSLETTER LINK -->
+            <a href="https://lucrezialuce2-max.github.io/Newletter/" target="_blank" class="block w-full bg-black text-white py-4 mt-6 text-xs font-bold uppercase tracking-widest hover:bg-lanerossi-taupe transition-colors">
+                Vai all'iscrizione <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+            
+            <div class="mt-4 text-[10px] text-gray-400">
+                Cliccando accetti di essere reindirizzato alla pagina di iscrizione esterna.
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-lanerossi-brown text-lanerossi-cream py-16">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-center md:text-left">
+            
+            <!-- Brand -->
+            <div class="md:col-span-1">
+                <h2 class="font-serif text-3xl mb-6">LANEROSSI</h2>
+                <p class="font-sans text-sm text-white/60 mb-6">
+                    Largo Santa Margherita, 1 <br>
+                    36078 Valdagno (VI)
+                </p>
+                <div class="flex justify-center md:justify-start gap-4 text-xl">
+                    <a href="#" class="hover:text-white transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="hover:text-white transition-colors"><i class="fab fa-pinterest-p"></i></a>
+                </div>
+            </div>
+
+            <!-- Links -->
+            <div>
+                <h4 class="font-sans uppercase text-xs tracking-widest mb-6 font-bold">Azienda</h4>
+                <ul class="space-y-3 font-serif text-lg text-white/80">
+                    <li><a href="#" class="hover:text-white transition-colors">La Storia</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Sostenibilità</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Press</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Contatti</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-sans uppercase text-xs tracking-widest mb-6 font-bold">Supporto</h4>
+                <ul class="space-y-3 font-serif text-lg text-white/80">
+                    <li><a href="#" class="hover:text-white transition-colors">Spedizioni</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Resi e Cambi</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">Guida alle taglie</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacts -->
+            <div>
+                 <h4 class="font-sans uppercase text-xs tracking-widest mb-6 font-bold">Contattaci</h4>
+                 <p class="font-serif text-xl mb-2">help@lanerossi.com</p>
+                 <p class="font-serif text-xl">+39 0445 123456</p>
+            </div>
+        </div>
+        
+        <div class="border-t border-white/10 mt-16 pt-8 text-center">
+            <p class="font-sans text-[10px] uppercase tracking-widest text-white/40">&copy; 2024 Lanerossi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- Mobile Menu Logic ---
+        const mobileMenu = document.getElementById('mobile-menu');
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+
+        function toggleMenu() {
+            if (mobileMenu.classList.contains('hidden-menu')) {
+                mobileMenu.classList.remove('hidden-menu');
+                mobileMenu.classList.add('visible-menu');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            } else {
+                mobileMenu.classList.remove('visible-menu');
+                mobileMenu.classList.add('hidden-menu');
+                document.body.style.overflow = 'auto'; // Restore scrolling
+            }
+        }
+
+        function toggleMenuAndScroll(event, id) {
+             toggleMenu();
+             setTimeout(() => {
+                 scrollToCenter(event, id);
+             }, 300); // Wait for menu close transition
+        }
+
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+
+        // --- Smooth Scroll Center Helper ---
+        function scrollToCenter(event, id) {
+            event.preventDefault();
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // --- Page Loader ---
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+        });
+
+        // --- Sticky Navbar Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'py-3', 'md:py-4');
+                navbar.classList.remove('py-4', 'md:py-6', 'bg-transparent');
+            } else {
+                navbar.classList.remove('bg-white/95', 'backdrop-blur-md', 'shadow-sm', 'py-3', 'md:py-4');
+                navbar.classList.add('py-4', 'md:py-6', 'bg-transparent');
+            }
+        });
+
+        // --- Intersection Observer for Animations ---
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target); // Animate only once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
